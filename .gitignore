@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python cache
+*.log
+
+# Backup files
+*_backup.py
+*_backup.csv
+*_backup.pkl
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local test files
+test_*.py
+
+# Large local model
+# DO NOT upload the current huge model directly to GitHub
+models/disease_model.pkl
