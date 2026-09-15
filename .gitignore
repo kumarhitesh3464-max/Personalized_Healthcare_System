@@ -41,4 +41,3 @@ test_*.py
 
 # Large local model
 # DO NOT upload the current huge model directly to GitHub
-models/disease_model.pkl
