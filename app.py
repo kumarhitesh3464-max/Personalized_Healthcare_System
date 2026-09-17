@@ -185,6 +185,35 @@ symptoms = [
 
 
 # ============================================================
+# WEIGHT MANAGEMENT CATEGORY HANDLING
+# ============================================================
+# Weight gain/loss are symptoms/health categories, not diseases.
+def detect_weight_category(selected_names, model_features):
+    items = [
+        str(x).strip().lower().replace("_", " ").replace("-", " ")
+        for x in list(selected_names) + list(model_features)
+    ]
+
+    loss_terms = (
+        "weight loss", "loss of weight", "unexplained weight loss",
+        "abnormal weight loss", "weight decrease", "decreased weight"
+    )
+    gain_terms = (
+        "weight gain", "gain of weight", "unexplained weight gain",
+        "abnormal weight gain", "weight increase", "increased weight"
+    )
+
+    has_loss = any(t in x for x in items for t in loss_terms)
+    has_gain = any(t in x for x in items for t in gain_terms)
+
+    if has_loss and not has_gain:
+        return "Weight Loss"
+    if has_gain and not has_loss:
+        return "Weight Gain"
+    return None
+
+
+# ============================================================
 # SELECTED SYMPTOMS
 # ============================================================
 
@@ -325,6 +354,12 @@ if predict_button:
                 {}
             )
 
+            # Weight gain/loss must not be presented as a disease.
+            weight_category = detect_weight_category(
+                selected_symptom_names,
+                symptoms
+            )
+
 
             # ==================================================
             # PREDICTION STATUS
@@ -355,10 +390,20 @@ if predict_button:
                 # is considered reliable.
                 # ----------------------------------------------
 
-                st.success(
-                    f"Predicted Disease: "
-                    f"{str(disease).title()}"
-                )
+                if weight_category:
+                    st.success(
+                        f"Health Category: {weight_category}"
+                    )
+                    st.info(
+                        f"{weight_category} is a symptom/health category, "
+                        "not a disease diagnosis. The underlying cause "
+                        "may require further medical evaluation."
+                    )
+                else:
+                    st.success(
+                        f"Predicted Disease: "
+                        f"{str(disease).title()}"
+                    )
 
 
                 # ----------------------------------------------
@@ -474,7 +519,10 @@ if predict_button:
 
             with summary_col3:
 
-                if reliable_prediction:
+                if weight_category:
+                    display_disease = weight_category
+
+                elif reliable_prediction:
 
                     display_disease = (
                         str(disease).title()
@@ -999,6 +1047,8 @@ if predict_button:
                 reliable_prediction
                 and
                 has_recommendations
+                and
+                not weight_category
             ):
 
                 # ----------------------------------------------
